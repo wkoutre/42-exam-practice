@@ -1,29 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_list_foreach.c                                  :+:      :+:    :+:   */
+/*   sort_list.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nkoutrel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/12 11:32:02 by nkoutrel          #+#    #+#             */
-/*   Updated: 2016/11/12 11:32:11 by nkoutrel         ###   ########.fr       */
+/*   Created: 2016/11/14 20:04:39 by nkoutrel          #+#    #+#             */
+/*   Updated: 2016/11/14 20:04:40 by nkoutrel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-** THIS IS INCORRECT.
-*/
+#include "list.h"
+#include <stddef.h>
 
-#include "ft_list.h"
-
-void	ft_list_foreach(t_list *begin_list, void (*f)(void *))
+static void		list_swap(t_list *l1, t_list *l2)
 {
-	if (begin_list)
+	int				tmp;
+
+	tmp = l1->data;
+	l1->data = l2->data;
+	l2->data = tmp;
+}
+
+t_list			*sort_list(t_list *lst, int (*cmp)(int, int))
+{
+	t_list			*tmp;
+
+	tmp = lst;
+	while (lst != NULL && lst->next != NULL)
 	{
-		while (begin_list)
+		if (cmp(lst->data, lst->next->data) == 0)
 		{
-			(*f)(begin_list->data);
-			begin_list = begin_list->next;
+			list_swap(lst, lst->next);
+			lst = tmp;
 		}
+		else
+			lst = lst->next;
 	}
+	return (tmp);
 }

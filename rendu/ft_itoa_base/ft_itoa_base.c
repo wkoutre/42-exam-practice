@@ -5,109 +5,122 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nkoutrel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/12 12:46:43 by nkoutrel          #+#    #+#             */
-/*   Updated: 2016/11/12 12:46:45 by nkoutrel         ###   ########.fr       */
+/*   Created: 2016/11/14 17:03:49 by nkoutrel          #+#    #+#             */
+/*   Updated: 2016/11/14 17:03:51 by nkoutrel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+** REMEMBER TO INITIALIZE ALL INDICES OF THE NEW STRING TO 0!!!!
+*/
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-void	ft_putnbr(int i, int base, char *new)
+void	ft_putnbr(int value, int base, char *str)
 {
-	int		negative;
-
-	negative = 0;
-	if (i < 0)
+	if (value >= base)
 	{
-		negative = 1;
-		i = i * -1;
+		ft_putnbr(value % base, base, str++);
+		ft_putnbr(value / base, base, str++);
 	}
-	if (i >= base)
+	else
 	{
-		ft_putnbr(i % base, base, new++);
-		ft_putnbr(i / base, base, new++);
-	}
-	if (i < base)
-	{
-		if (negative == 1 && base == 10)
+		if (value >= 0 && value <= 9)
 		{
-			*new = '-';
-		}
-		if (i >= 0 && i <= 9)
-		{
-			*new = i + 48;
+			*str = value + 48;
 		}
 		else
 		{
-			*new = i + 55;
+			*str = value + 55;
 		}
-	}	
+	}
 }
 
 int		ft_strlen(char *str)
 {
-	int i;
+	int	 i;
 
 	i = 0;
 	while (*str)
 	{
-		i++;
 		str++;
+		i++;
 	}
 	return (i);
 }
 
-char		*ft_itoa_base(int value, int base)
+char	*ft_itoa_base(int value, int base)
 {
-	char	*new;
-	char 	*rev_new;
+	int 	negative;
+	char	*min;
+	char	*num;
 	int 	i;
+	char	*rev;
 	int		len;
-	int		negative;
-	char 	*min;
 
-	min = "-2147483648";
-	i = 0;
-	len = 0;
 	negative = 0;
+	i = 0;
+	min = "-2147483648";
+
 	if (value < 0)
-		negative = 1;
-	if ((value > 2147483647 || value < -2147483648) && base == 10)
-		return (NULL);
-	if (!(new = (char *)malloc(sizeof(char) * 2048)))
-		return (NULL);	
-	if (value == -2147483648 && negative == 1)
 	{
-		while (i < ft_strlen(min))
+		if (base == 10)
+			negative = 1;
+		value *= -1;
+	}
+	if (value == -2147483648)
+	{
+		if (!(num = (char *)malloc(sizeof(char) * 31)))
+			return (NULL);
+		while (min[i])
 		{
-			new[i] = min[i];
+			num[i] = min[i];
 			i++;
 		}
-		return (new);
+		num[i] = '\0';
+		return (num);
 	}
-	ft_putnbr(value, base, new);
-	if (!(rev_new = (char *)malloc(sizeof(ft_strlen(new) + 1))))
+	if (value > 2147483647 || value < -2147483648)
 		return (NULL);
-	while (new[i])
+	if (!(num = (char *)malloc(sizeof(char) * 31)))
+		return (NULL);
+	i = 0;
+	while (i < 31)
 	{
+		num[i] = 0;
 		i++;
 	}
-	i--;
-	while (i >= 0)
+	ft_putnbr(value, base, num);
+	i = 0;
+	len = ft_strlen(num);
+	while (*num)
+		num++;
+	num--;
+	if (negative == 1)
 	{
-		if (negative == 1 && base == 10)
+		if (!(rev = (char *)malloc(sizeof(char) * (len + 2))))
+			return (NULL);
+		rev[i] = '-';
+		i++;
+		while (i < len + 1)
 		{
-			rev_new[len] = '-';
-			len++;
-			negative = 0;
+			rev[i] = *num;
+			i++;
+			num--;
 		}
-
-		rev_new[len] = new[i];
-		i--;
-		len++;
 	}
-	rev_new[len] = '\0';
-	return (rev_new);
+	else
+	{
+		if (!(rev = (char *)malloc(sizeof(char) * (len + 2))))
+			return (NULL);
+		while (i < len)
+		{
+			rev[i] = *num;
+			i++;
+			num--;
+		}
+	}
+	rev[i] = '\0';
+	return (rev);
 }

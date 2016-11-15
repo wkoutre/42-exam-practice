@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-char	*par(char *src, int way)
+char	*parse(char *src, int way)
 {
 	int s;
 
@@ -46,9 +46,9 @@ void	brainfuck(char *src, char *buf)
 		else if (*src == '.')
 			write(1, buf, 1);
 		else if (*src == '[' && !(*buf))
-			src = par(src, 1);
+			src = parse(src, 1);
 		else if (*src == ']' && (*buf))
-			src = par(src, -1);
+			src = parse(src, -1);
 		src++;
 	}
 }
